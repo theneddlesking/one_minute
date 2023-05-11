@@ -1,22 +1,31 @@
+# data per tile type
+class TileData
+    attr_accessor :id, :solid
+
+    def initialize(id, solid)
+        @id = id
+        @solid = solid
+    end
+end
+
 # the tile codes from the image
 # 20 tiles per row, indexed at 0
 module Tiles
-    SKY = 20 * 8 - 3
-    DIRT = 20 * 6 + 3
-    GRASS = 23
+    SKY = TileData.new(20 * 8 - 3,  false)
+    DIRT = TileData.new(20 * 6 + 3, true)
+    GRASS = TileData.new(23, true)
 end
 
 # a single tile
 class Tile
-    attr_accessor :id, :x, :y
+    attr_accessor :data, :x, :y
 
-    def initialize(id, x, y)
-        @id = id
+    def initialize(data, x, y)
+        @data = data
         @x = x
         @y = y
     end
 end
-
 
 # a single screen level
 class Level
@@ -32,10 +41,10 @@ class Level
 end
 
 # fills a row at some indexed height with a paritcular tile
-def fill_row(map_data, width, height, tile)
+def fill_row(map_data, width, height, data)
     map_data[height] = []
     width.times do |x|
-        map_data[height] << Tile.new(tile, x, height)
+        map_data[height] << Tile.new(data, x, height)
     end
 end
 
@@ -59,9 +68,10 @@ def generate_basic_map(width, height)
 
     # creates dirt below the grass
     (1..(ground_depth-1)).step(1) do |dirt_row|
-        puts(dirt_row)
         fill_row(map_data, width, height - dirt_row, Tiles::DIRT)
     end
+
+    map_data[height - ground_depth - 1][10] = Tile.new(Tiles::DIRT, 10, height - ground_depth + 1)
 
     return map_data
 end
@@ -76,7 +86,7 @@ end
 def export_map_data(map_data)
     maps = File.open("./maps.txt", "a")
     # just get the id of each tile 
-    tile_ids = map_data.map { |row| row.map { |cell| cell.id } }
+    tile_ids = map_data.map { |row| row.map { |cell| cell.data.id } }
     maps.puts(tile_ids.to_s)
     maps.close()
 end

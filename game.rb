@@ -1,7 +1,7 @@
 require_relative 'level.rb'
 require_relative 'character.rb'
+require_relative 'collision.rb'
 require 'gosu'
-
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
@@ -9,7 +9,7 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level
+    attr_accessor :current_level, :player
     
     def initialize
       super(WIDTH, HEIGHT)
@@ -25,6 +25,28 @@ class PlatformerGame < Gosu::Window
 
       # current characters to be rendered
       @characters = [Player.new()]
+
+      # the player
+      @player = @characters[0]
+    end
+
+    def update
+      # Key inputs
+      
+      if button_down?(Gosu::KB_SPACE) && @player.y_velocity == 0
+        @player.y_velocity -= 6.5
+        apply_physics(@player)
+      end
+
+      @characters.each do |character| 
+        # apply gravity
+        if !character_hit_tiles?(character, @current_level.map_data.flatten)
+          apply_physics(character)
+        end
+
+
+        # check every tile gigachad
+      end
     end
 
     def draw
@@ -54,7 +76,7 @@ class PlatformerGame < Gosu::Window
       map_height.times do |y|
         map_width.times do |x|
           # get tile index id
-          tile_index = map_data[y][x].id
+          tile_index = map_data[y][x].data.id
           next if tile_index == 0 # skip empty tiles
 
           # draw the tile image
