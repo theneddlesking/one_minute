@@ -27,6 +27,19 @@ class Tile
     end
 end
 
+class TileSet
+    attr_accessor :tiles, :current_index, :tile, :shortcut, :current_tile, :tile_count, :key_pressed
+
+    def initialize(tiles, shortcut)
+        @tiles = tiles
+        @tile_count = tiles.length
+        @current_index = 0
+        @shortcut = shortcut
+        @current_tile = tiles[0]
+        @key_pressed = false
+    end
+end
+
 # a single screen level
 class Level
     attr_accessor :tile_map, :mechanics, :map_data, :map_height, :map_width
@@ -41,10 +54,18 @@ class Level
 end
 
 # fills a row at some indexed height with a paritcular tile
-def fill_row(map_data, width, height, data)
+def fill_row(map_data, width, height, data, length = nil)
+    if (length == nil)
+        length = width
+    end
+    
     map_data[height] = []
     width.times do |x|
-        map_data[height] << Tile.new(data, x, height)
+        if x > length
+            map_data[height] << Tile.new(Tiles::SKY, x, height)
+        else
+            map_data[height] << Tile.new(data, x, height)
+        end
     end
 end
 
@@ -63,6 +84,8 @@ def generate_basic_map(width, height)
         map_data << row
     end
 
+    fill_row(map_data, width, 18, Tiles::GRASS, 10)
+
     # creates a grass floor
     fill_row(map_data, width, height - ground_depth, Tiles::GRASS)
 
@@ -71,7 +94,11 @@ def generate_basic_map(width, height)
         fill_row(map_data, width, height - dirt_row, Tiles::DIRT)
     end
 
-    map_data[height - ground_depth - 1][10] = Tile.new(Tiles::DIRT, 10, height - ground_depth + 1)
+    map_data[height - ground_depth - 5][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 5)
+    map_data[height - ground_depth - 4][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 4)
+    map_data[height - ground_depth - 3][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 3)
+    map_data[height - ground_depth - 2][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 2)
+    map_data[height - ground_depth - 1][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 1)
 
     return map_data
 end

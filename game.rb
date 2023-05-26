@@ -1,7 +1,12 @@
 require_relative 'level.rb'
 require_relative 'character.rb'
 require_relative 'collision.rb'
+require_relative 'editor.rb'
+
 require 'gosu'
+
+
+EDITOR_MODE = true
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
@@ -9,13 +14,16 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player
+    attr_accessor :current_level, :player, :editor 
     
     def initialize
       super(WIDTH, HEIGHT)
       @levels = [Level.new(generate_basic_map(36, 27))]
       @level_number = 1
       @current_level = @levels[@level_number - 1]
+
+
+      @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS], Gosu::KB_B)], @current_level)
 
       # load tiles from tile map image
       @tiles = Gosu::Image.load_tiles(self, "./images/tiles_packed.png", TILE_SIZE, TILE_SIZE, true)
@@ -30,28 +38,52 @@ class PlatformerGame < Gosu::Window
       @player = @characters[0]
     end
 
-    def update
+    # this is called by Gosu to see if should show the cursor (or mouse)
+    def needs_cursor?
+      # only show cursor when editing
+      EDITOR_MODE
+    end
+
+    def update_game()
       # Key inputs
-      
+
+      # Jump
       if button_down?(Gosu::KB_SPACE) && @player.y_velocity == 0
         @player.y_velocity -= 6.5
-        apply_physics(@player)
       end
 
+      # Move Left
+      if button_down?(Gosu::KbLeft)
+        @player.x_velocity -= 0.4
+      end
+
+      # Move Right
+      if button_down?(Gosu::KbRight)
+        @player.x_velocity += 0.4
+      end
+
+      # Make airborne characters fall
       @characters.each do |character| 
         # apply gravity
-        if !character_hit_tiles?(character, @current_level.map_data.flatten)
-          apply_physics(character)
-        end
-
-
-        # check every tile gigachad
+        apply_physics(character)
       end
+    end
+
+    def update
+      if (EDITOR_MODE)
+        update_editor(@editor)
+      else
+        update_game()
+      end      
     end
 
     def draw
       draw_level(@current_level)
-      draw_characters()
+
+      # editor mode only needs tiles
+      if !EDITOR_MODE
+        draw_characters()
+      end
     end
 
     # draw characters on top of the existing level
@@ -75,6 +107,7 @@ class PlatformerGame < Gosu::Window
     
       map_height.times do |y|
         map_width.times do |x|
+
           # get tile index id
           tile_index = map_data[y][x].data.id
           next if tile_index == 0 # skip empty tiles

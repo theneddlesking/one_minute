@@ -6,14 +6,15 @@ module Tiles
 end
 
 class Player
-    attr_accessor :health, :x, :y, :x_velocity, :y_velocity, :size, :id, :max_velocity, :width, :height
+    attr_accessor :health, :x, :y, :x_velocity, :y_velocity, :size, :id, :max_x_velocity, :max_y_velocity, :width, :height
 
     def initialize()
         @health = 3
         @x = 50
-        @y = 250
+        @y = 350
 
-        @max_velocity = 10
+        @max_y_velocity = 6
+        @max_x_velocity = 3
 
         @x_velocity = 0.0
         @y_velocity = 0.0

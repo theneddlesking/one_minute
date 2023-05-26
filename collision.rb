@@ -4,12 +4,44 @@ TILE_SIZE = 18
 CHARACTER_SIZE = 24
 
 def apply_physics(entity)
- 
-
+  # gravity
   entity.y_velocity += 0.2
-  entity.y_velocity = [entity.y_velocity, entity.max_velocity].min()
+  entity.y_velocity = [entity.y_velocity, entity.max_y_velocity].min()
 
+  #friction
+  friction = 0.1
+  # calculate the direction of the player's velocity
+  if player.x_velocity > 0
+    direction = -1  
+  elsif player.x_velocity < 0
+    direction = 1
+  else
+    direction = 0  # no friction if the player isn't moving
+  end
+
+  entity.x_velocity += friction * direction
+
+  # stops the friction once the character is stopped
+  if sign(entity.x_velocity) == direction
+      entity.x_velocity = 0
+  end
+
+
+  entity.x_velocity = [entity.x_velocity.abs(), entity.max_x_velocity].min() * sign(entity.x_velocity)
+
+  entity.x += entity.x_velocity
   entity.y += entity.y_velocity
+end
+
+# get the sign
+def sign(x)
+  if (x > 0) 
+    return 1
+  end
+  if (x < 0) 
+    return -1
+  end
+  return 0
 end
 
 def character_hit_tiles?(character, tiles)
@@ -38,7 +70,7 @@ def character_hit_tiles?(character, tiles)
 end 
 
 class BoundingBox
-  attr_accessor :x1, :y1, :x2, :y2, :x3, :y3, :x4, :y4
+  attr_accessor :x1, :y1, :x2, :y2, :x3, :y3, :x4, :y4, :width, :height
 
   def initialize(width, height, x1, y1)
     @x1 = x1
@@ -49,35 +81,33 @@ class BoundingBox
     @y3 = y1 + height
     @x4 = x1
     @y4 = y1 + height
+    @width = width
+    @height = height
   end
 end
 
 
-def handle_tile_collision(box2, box1, entity)
-  overlap_x = [box2.x2 - box1.x1, box1.x2 - box2.x1].min
-  overlap_y = [box2.y2 - box1.y1, box1.y2 - box2.y1].min
+def handle_tile_collision(box1, box2, entity)
+  overlap_x = [box1.x1 + box1.width - box2.x1, box2.x1 + box2.width - box1.x1].min
+  overlap_y = [box1.y1 + box1.height - box2.y1, box2.y1 + box2.height - box1.y1].min
 
-  # puts(overlap_x)
-  # puts(overlap_y)
+  puts(overlap_x)
+  puts(overlap_y)
 
   # determine if the player is colliding from the top or bottom of the tile
-  if overlap_x < overlap_y
-    # collision from the side, adjust player's horizontal position
-    if box2.x1 < box1.x1
-      entity.x = box1.x1 - entity.width
+  if overlap_x > overlap_y
+    if box1.x1 < box2.x1
+        entity.x -= overlap_x
     else
-      entity.x = box1.x2
+        entity.x += overlap_x
     end
   else
-    # collision from the top or bottom, adjust player's vertical position
-    if box2.y1 < box1.y1
-      entity.y = box1.y1 - entity.height
-      entity.y_velocity = 0 # stop player from falling through floor      
+    if box1.y1 < box2.y1
+        entity.y -= overlap_y
     else
-      puts("collided bottom")
-      entity.y = box1.y2
+        entity.y += overlap_y
     end
-  end
+end
 end
 
 
