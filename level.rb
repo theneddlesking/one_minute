@@ -54,14 +54,17 @@ end
 
 # a single screen level
 class Level
-    attr_accessor :tile_map, :mechanics, :map_data, :map_height, :map_width
+    attr_accessor :map_data, :map_height, :map_width, :decorations, :mechanics, :characters
 
-    def initialize(map_data)
+    def initialize(map_data, decorations = [], characters = [], mechanics = [])
         @map_data = map_data
         @map_height = map_data.length
         @map_width = map_data[0].length
     
-        @mechanics = []
+        @decorations = decorations
+
+        @characters = characters
+        @mechanics = mechanics
     end
 end
 
@@ -147,4 +150,40 @@ def load_levels(count)
     maps.close()
 
     return levels
+end
+
+
+def start_level(level_index, game)
+    game.level_number = level_index
+    game.current_level = game.levels[game.level_number - 1]
+  
+    setup_level(game.player, game.current_level)
+    reset_timer(game.timer)
+  
+    # the timer begins again
+    start_timer(game.timer)
+end
+  
+def setup_level(player, level)
+    # set characters
+    level.characters.each do |character|
+      # reset physics and positions of all characters
+      character.x = character.start_x
+      character.y = character.start_y
+      character.x_velocity = 0
+      character.y_velocity = 0
+  
+      # TODO enemy pathing?
+    end
+    
+    player.beat_level = false
+  
+    # set level mechanics
+    reset_level_mechanics(level.mechanics)
+end
+  
+def reset_level_mechanics(mechanics)
+    # reset coins
+    # reset keys    
+    # reset buttons
 end

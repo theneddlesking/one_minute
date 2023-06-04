@@ -4,9 +4,7 @@ require_relative 'collision.rb'
 require_relative 'editor.rb'
 require_relative 'timer.rb'
 
-
 require 'gosu'
-
 
 EDITOR_MODE = false
 
@@ -16,7 +14,7 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count
     
     def initialize
       super(WIDTH, HEIGHT)
@@ -24,8 +22,9 @@ class PlatformerGame < Gosu::Window
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 
-      @timer = Timer.new()
+      @level_count = @levels.length
 
+      @timer = Timer.new()
 
       @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS], Gosu::KB_B)], @current_level)
 
@@ -71,7 +70,24 @@ class PlatformerGame < Gosu::Window
         apply_physics(@current_level, character)
       end
 
+      if @player.beat_level
+          # the player beat the final level so they beat the game
+          if @level_number == @level_count
+            game_win()
+          else # the player starts the next level
+            start_level(@level_number + 1, self)
+          end
+      end 
+
       update_timer(@timer)
+
+      # If you run out of time then restart at level 1
+      if @timer.done
+        game_lose()
+
+        # TODO instead of instantly starting the next level take them back to the menu screen 
+        start_level(1, self)
+      end
     end
 
     def update
@@ -95,7 +111,7 @@ class PlatformerGame < Gosu::Window
 
     def draw_timer()
       # draw timer in top left corner
-      @timer.font.draw(@timer.seconds_left, 10, 10, 1)
+      @timer.font.draw_text(@timer.seconds_left, 10, 10, 1)
     end
 
     # draw characters on top of the existing level
@@ -131,6 +147,14 @@ class PlatformerGame < Gosu::Window
     end
 end
 
+def game_lose()
+  puts("Game over! You ran out of time!")
+end
+
+def game_win()
+  puts("You win!")
+end
+
 # main game loop
 
 def main
@@ -138,15 +162,10 @@ def main
     game = PlatformerGame.new
 
     # start first level
-    start_level(game.current_level, game.timer)    
+    start_level(1, game)    
 
     # render the game
     game.show
-end
-
-def start_level(level, timer)
-  reset_timer(timer)
-  start_timer(timer)
 end
 
 main
