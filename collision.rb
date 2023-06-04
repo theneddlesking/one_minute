@@ -48,7 +48,7 @@ def character_hit_tiles?(level, character, x_step, y_step)
     solid?(level, character.x + x_step, character.y + y_step - CHARACTER_SIZE)
 end
 
-def get_mechanic_tile(level, x, y)
+def get_current_tile(level, x, y)
   x = x / TILE_SIZE
   y = y / TILE_SIZE
 

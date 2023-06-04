@@ -106,11 +106,11 @@ class PlatformerGame < Gosu::Window
 
       # Check if player should interact with tile with special mechanic (eg. spike, coin, diamond)
 
-      # check which tile was hit as it may have a special interaction eg. spike, ladder or button
-      mechanic_tile = get_mechanic_tile(@current_level, @player.x, @player.y)
+      # check which tile was hit as it may have a special interaction eg. spike, ladder, coin etc.
+      tile = get_current_tile(@current_level, @player.x, @player.y)
 
       # use the mechanic of the tile
-      activate_mechanic(@player, mechanic_tile)  
+      activate_mechanic(@player, tile)  
 
       if @player.beat_level || @player.x < 50
 

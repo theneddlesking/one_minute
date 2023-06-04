@@ -2,18 +2,36 @@ require 'json'
 
 # data per tile type
 class TileData
-    attr_accessor :id, :solid
+    attr_accessor :id, :solid, :collectable, :mechanic
 
-    def initialize(id, solid)
+    def initialize(id, solid, collectable, mechanic)
         @id = id
         @solid = solid
+        @collectable = collectable
+        @mechanic = mechanic
     end
+end
+
+module Mechanics
+    NONE = :none
+    FLAG = :flag
+    SPIKE = :spike
+    SPRING = :spring
+    LADDER = :ladder
+    LOCK = :lock
+end
+
+module Collectables
+    NONE = :none
+    KEY = :key
+    COIN = :coin
+    DIAMOND = :diamond
 end
 
 $tile_map = {}
 
-def add_new_tile_data(id, solid = true)
-    tile_data = TileData.new(id, solid)
+def add_new_tile_data(id, solid = true, collectable = Collectables::NONE, mechanic = Mechanics::NONE)
+    tile_data = TileData.new(id, solid, collectable, mechanic)
     $tile_map.store(id, tile_data)
     return tile_data
 end
@@ -22,12 +40,29 @@ end
 # the tile codes from the image
 # 20 tiles per row, indexed at 0
 module Tiles
+    # Blocks
     SKY = add_new_tile_data(0,  false)
     DIRT = add_new_tile_data(20 * 6 + 3)
     GRASS = add_new_tile_data(23)
-    FLAG = add_new_tile_data(20 * 6 + 12)
-end
 
+    # false, Collectables
+    COIN = add_new_tile_data(0, false, Collectables::COIN)
+    DIAMOND = add_new_tile_data(0, false, Collectables::DIAMOND)
+    KEY = add_new_tile_data(0, false, Collectables::KEY)
+
+    # Tiles with mechanics
+    FLAG1 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
+    FLAG2 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
+    FLAG3 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
+
+    LADDER1 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
+    LADDER2 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
+    LADDER3 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
+
+    SPIKE = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::SPIKE)
+    LOCK = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LOCK)
+    SPRING = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::SPRING)
+end
 
 # a single tile
 class Tile
