@@ -84,7 +84,7 @@ def generate_basic_map(width, height)
         map_data << row
     end
 
-    fill_row(map_data, width, 18, Tiles::GRASS, 10)
+    # fill_row(map_data, width, 18, Tiles::GRASS, 10)
 
     # creates a grass floor
     fill_row(map_data, width, height - ground_depth, Tiles::GRASS)

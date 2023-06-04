@@ -48,7 +48,7 @@ class PlatformerGame < Gosu::Window
     def update_game()
       # Jump
       if button_down?(Gosu::KB_SPACE)
-        jump(@current_level.map_data, @player)
+        jump(@current_level, @player)
       end
 
       # Move Left
@@ -64,7 +64,7 @@ class PlatformerGame < Gosu::Window
       # Make airborne characters fall
       @characters.each do |character| 
         # apply x and y velocities to all characters
-        apply_physics(@current_level.map_data, character)
+        apply_physics(@current_level, character)
       end
     end
 
