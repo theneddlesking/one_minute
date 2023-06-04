@@ -159,15 +159,31 @@ def start_level(level_index, game)
     game.current_level = game.levels[game.level_number - 1]
   
     setup_level(game.current_level)
-    reset_timer(game.timer)
 
-    # get the player for this level
+    # load current player and characters for that level into the game
     game.player = game.current_level.characters[0]
+    game.characters = game.current_level.characters
   
     # the timer begins again
+    reset_timer(game.timer)
+
     start_timer(game.timer)
 end
-  
+
+def create_levels(levels, level_data)
+    levels.each_with_index do | level, index |
+        decorations, characters, mechanics = level_data[index]
+
+        create_level(level, decorations, characters, mechanics)
+    end
+end
+
+def create_level(level, decorations, characters, mechanics)
+    level.decorations = decorations
+    level.characters = characters
+    level.mechanics = mechanics
+end
+
 def setup_level(level)
     player = level.characters[0]
 

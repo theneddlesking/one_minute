@@ -8,9 +8,9 @@ end
 class Player
     attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :jump_height, :beat_level, :start_x, :start_y
 
-    def initialize()
-        @start_x = 450
-        @start_y = 50
+    def initialize(x, y)
+        @start_x = x
+        @start_y = y
 
         @x = @start_x
         @y = @start_y
@@ -28,11 +28,14 @@ class Player
 end
 
 class Enemy 
-    attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :path
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :path, :start_x, :start_y
 
-    def initialize()
-        @x = 50
-        @y = 50
+    def initialize(x, y)
+        @start_x = x
+        @start_y = y
+
+        @x = @start_x
+        @y = @start_y
 
         @x_velocity = 0
         @y_velocity = 0

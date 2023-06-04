@@ -14,11 +14,58 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :level_data, :characters
     
     def initialize
       super(WIDTH, HEIGHT)
-      @levels = load_levels(2)
+      @level_data = [
+        # Level 1 Data
+        [
+          # Decorations
+          [],
+          # Characters
+          [Player.new(450, 50)],
+          # Mechanics
+          []
+        ],
+        # Level 2 Data
+        [
+          # Decorations
+          [],
+          # Characters
+          [Player.new(200, 200)],
+          # Mechanics
+          []
+        ],
+        # Level 3 Data
+        [
+          # Decorations
+          [],
+          # Characters
+          [],
+          # Mechanics
+          []
+        ],
+        # Level 4 Data
+        [
+          # Decorations
+          [],
+          # Characters
+          [],
+          # Mechanics
+          []
+        ],# Level 5 Data
+        [
+          # Decorations
+          [],
+          # Characters
+          [],
+          # Mechanics
+          []
+        ]
+      ]
+
+      @levels = create_levels(load_levels(2), @level_data)
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 
@@ -35,7 +82,7 @@ class PlatformerGame < Gosu::Window
       @character_tiles = Gosu::Image.load_tiles(self, "./images/characters_packed.png", CHARACTER_SIZE, CHARACTER_SIZE, true)
 
       # current characters to be rendered
-      @characters = [Player.new()]
+      @characters = @current_level.characters
 
       # the player
       @player = @characters[0]
@@ -75,6 +122,7 @@ class PlatformerGame < Gosu::Window
 
           # the player beat the final level so they beat the game
           if @level_number == @level_count 
+            reset_timer(@timer)
             game_win()
           else # the player starts the next level
             start_level(@level_number + 1, self)

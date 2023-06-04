@@ -19,11 +19,12 @@ end
 def reset_timer(timer)
     timer.start_time = Time.now
     timer.done = false
+    timer.running = false
 end
 
 def update_timer(timer)
     if !timer.running
-        ret
+        return
     end
 
     elapsed_time = Time.now - timer.start_time
@@ -31,4 +32,5 @@ def update_timer(timer)
 
     # if there is no time left then the timer has ended
     timer.done = timer.seconds_left == 0
+    timer.running = !timer.done
 end
