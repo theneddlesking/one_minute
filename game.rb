@@ -110,9 +110,9 @@ class PlatformerGame < Gosu::Window
       tile = get_current_tile(@current_level, @player.x, @player.y)
 
       # use the mechanic of the tile
-      activate_tile(@player, tile)  
+      activate_tile(@player, tile, @current_level)  
 
-      if @player.beat_level || @player.x < 50
+      if @player.beat_level
 
           # the player beat the final level so they beat the game
           if @level_number == @level_count 
@@ -244,12 +244,52 @@ def game_win(menu)
 end
 
 # activate collectable / mechanic associated with the tile
-def activate_tile(player, tile)
-    # check if it is collectable
-    # if its collectable then increment score of that collectable
-    # check if it is mechanic
-    # if its mechanic then do a case by case for each mechanic
-    # do the thing related to that mechanic
+def activate_tile(player, tile, level)
+  if tile == nil
+    return
+  end
+
+  puts(tile.data.collectable)
+
+  case tile.data.collectable
+  when Collectables::KEY
+    player.has_key = true
+    remove_collectable(level, tile)
+  when Collectables::DIAMOND
+    player.diamonds += 1
+    remove_collectable(level, tile)
+  when Collectables::COIN
+    player.coins += 1
+    remove_collectable(level, tile)
+  end
+
+  # puts(tile.data.mechanic)
+
+  case tile.data.mechanic
+  when Mechanics::SPIKE
+    puts("You died!")
+    player.dead = true
+  when Mechanics::FLAG
+    puts("You reached the flag")
+    player.beat_level = true
+  when Mechanics::SPRING
+    player.y_velocity = -20 
+  when Mechanics::LOCK
+    if (player.has_key)
+      remove_lock_tile(level, tile)
+    end
+  when Mechanics::LADDER
+    puts("Ladder")
+    player.y_velocity = -5
+  end
+end
+
+def remove_collectable(level, collectable)
+  collectable.collected = true
+end
+
+def remove_lock_tile(level, lock)
+  lock.locked = false
 end
 
 # main game loop

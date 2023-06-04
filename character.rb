@@ -6,7 +6,7 @@ module Tiles
 end
 
 class Player
-    attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :jump_height, :beat_level, :start_x, :start_y, :dead
+    attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :jump_height, :beat_level, :start_x, :start_y, :dead, :diamonds, :coins, :has_key
 
     def initialize(x, y)
         @start_x = x
@@ -23,6 +23,10 @@ class Player
         @beat_level = false
 
         @dead = false
+
+        @coins = 0
+        @diamonds = 0
+        @has_key = false
 
         # for rendering which character
         @id = Tiles::PLAYER

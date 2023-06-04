@@ -52,11 +52,11 @@ def get_current_tile(level, x, y)
   x = x / TILE_SIZE
   y = y / TILE_SIZE
 
-  if (off_map?(level, x, y))
+  if (off_map?(level, x + 1, y + 1))
     return nil
   end
 
-  return level.map_data[y][x]
+  return level.map_data[y + 1][x + 1]
 end
 
 def solid?(level, x, y)

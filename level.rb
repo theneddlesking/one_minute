@@ -9,6 +9,7 @@ class TileData
         @solid = solid
         @collectable = collectable
         @mechanic = mechanic
+
     end
 end
 
@@ -64,12 +65,18 @@ end
 
 # a single tile
 class Tile
-    attr_accessor :data, :x, :y
+    attr_accessor :data, :x, :y, :collected, :locked
 
     def initialize(data, x, y)
         @data = data
         @x = x
         @y = y
+
+        # used for collectables
+        @collected = false
+
+        # used for locks
+        @locked = true
     end
 end
 
