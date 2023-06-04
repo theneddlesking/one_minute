@@ -11,13 +11,13 @@ class Player
     def initialize()
         @health = 3
         @x = 50
-        @y = 350
+        @y = 50
 
         @max_y_velocity = 6
         @max_x_velocity = 3
 
-        @x_velocity = 0.0
-        @y_velocity = 0.0
+        @x_velocity = 0
+        @y_velocity = 0
 
         @size = 24
 

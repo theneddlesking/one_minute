@@ -2,7 +2,7 @@
 class TileData
     attr_accessor :id, :solid
 
-    def initialize(id, solid)
+    def initialize(id, solid = true)
         @id = id
         @solid = solid
     end
@@ -12,8 +12,8 @@ end
 # 20 tiles per row, indexed at 0
 module Tiles
     SKY = TileData.new(20 * 8 - 3,  false)
-    DIRT = TileData.new(20 * 6 + 3, true)
-    GRASS = TileData.new(23, true)
+    DIRT = TileData.new(20 * 6 + 3)
+    GRASS = TileData.new(23)
 end
 
 # a single tile

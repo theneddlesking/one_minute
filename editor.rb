@@ -58,7 +58,8 @@ def swap_tile_shortcut(editor, direction)
 end
 
 def save_map_shortcut(editor)
-    if (button_down?(Gosu::KB_S))
+    if (button_up?(Gosu::KB_S, editor.key_states))
+        puts("save data")
         export_map_data(editor.level.map_data)
     end
 end

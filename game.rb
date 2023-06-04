@@ -6,7 +6,7 @@ require_relative 'editor.rb'
 require 'gosu'
 
 
-EDITOR_MODE = true
+EDITOR_MODE = false
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
@@ -41,31 +41,30 @@ class PlatformerGame < Gosu::Window
     # this is called by Gosu to see if should show the cursor (or mouse)
     def needs_cursor?
       # only show cursor when editing
-      EDITOR_MODE
+      # EDITOR_MODE
+      return true
     end
 
     def update_game()
-      # Key inputs
-
       # Jump
-      if button_down?(Gosu::KB_SPACE) && @player.y_velocity == 0
-        @player.y_velocity -= 6.5
+      if button_down?(Gosu::KB_SPACE)
+        jump(@current_level.map_data, @player)
       end
 
       # Move Left
       if button_down?(Gosu::KbLeft)
-        @player.x_velocity -= 0.4
+        @player.x_velocity = -5
       end
 
       # Move Right
       if button_down?(Gosu::KbRight)
-        @player.x_velocity += 0.4
+        @player.x_velocity = 5
       end
 
       # Make airborne characters fall
       @characters.each do |character| 
-        # apply gravity
-        apply_physics(character)
+        # apply x and y velocities to all characters
+        apply_physics(@current_level.map_data, character)
       end
     end
 
