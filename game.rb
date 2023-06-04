@@ -110,7 +110,7 @@ class PlatformerGame < Gosu::Window
       tile = get_current_tile(@current_level, @player.x, @player.y)
 
       # use the mechanic of the tile
-      activate_mechanic(@player, tile)  
+      activate_tile(@player, tile)  
 
       if @player.beat_level || @player.x < 50
 
@@ -243,8 +243,13 @@ def game_win(menu)
   @menu.message = "                   Congratulations! You win! \n If you want to play again, press [ENTER] to restart!"
 end
 
-def activate_mechanic(player, tile)
-
+# activate collectable / mechanic associated with the tile
+def activate_tile(player, tile)
+    # check if it is collectable
+    # if its collectable then increment score of that collectable
+    # check if it is mechanic
+    # if its mechanic then do a case by case for each mechanic
+    # do the thing related to that mechanic
 end
 
 # main game loop

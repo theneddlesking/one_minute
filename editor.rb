@@ -8,7 +8,7 @@ class Editor
             # Collectables    
             TileSet.new([Tiles::COIN, Tiles::DIAMOND, Tiles::KEY], Gosu::KB_C),
             # Mechanics   
-            TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::FLAG3, Tiles::LADDER1, Tiles::LADDER2, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_C),
+            TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::LADDER1, Tiles::LADDER2, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_M),
             # Decoration   
             # TileSet.new([
                 # Tiles::WATER1, Tiles::WATER2, Tiles::WATER3, Tiles::WATER4, 
@@ -79,6 +79,8 @@ end
 
 def select_tile_set(editor, tile_set)
     if (button_down?(tile_set.shortcut))
+        puts(tile_set.shortcut)
+
         # the editor selects the new tile set 
         editor.current_tile_set = tile_set
 
