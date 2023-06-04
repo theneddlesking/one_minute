@@ -15,58 +15,34 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :level_data, :characters, :menu
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data
     
     def initialize
       super(WIDTH, HEIGHT)
-      @level_data = [
-        # Level 1 Data
+      @character_data = [
         [
-          # Decorations
-          [],
-          # Characters
-          [Player.new(450, 50)],
-          # Mechanics
-          []
+          # Level 1 Characters
+          Player.new(450, 50)
         ],
-        # Level 2 Data
         [
-          # Decorations
-          [],
-          # Characters
-          [Player.new(200, 200)],
-          # Mechanics
-          []
+          # Level 2 Characters
+          Player.new(250, 50)
         ],
-        # Level 3 Data
         [
-          # Decorations
-          [],
-          # Characters
-          [],
-          # Mechanics
-          []
+          # Level 3 Characters
+          Player.new(450, 50)
         ],
-        # Level 4 Data
         [
-          # Decorations
-          [],
-          # Characters
-          [],
-          # Mechanics
-          []
-        ],# Level 5 Data
+          # Level 4 Characters
+          Player.new(450, 50)
+        ],
         [
-          # Decorations
-          [],
-          # Characters
-          [],
-          # Mechanics
-          []
+          # Level 5 Characters
+          Player.new(450, 50)
         ]
       ]
 
-      @levels = create_levels(load_levels(2), @level_data)
+      @levels = add_characters_to_levels(load_level_maps(2), @character_data)
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 
@@ -76,7 +52,7 @@ class PlatformerGame < Gosu::Window
 
       @timer = Timer.new()
 
-      @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS, Tiles::FLAG], Gosu::KB_B)], @current_level)
+      @editor = Editor.new(@current_level)
 
       # load tiles from tile map image
       @tiles = Gosu::Image.load_tiles(self, "./images/tiles_packed.png", TILE_SIZE, TILE_SIZE, true)
@@ -94,25 +70,22 @@ class PlatformerGame < Gosu::Window
     # this is called by Gosu to see if should show the cursor (or mouse)
     def needs_cursor?
       # only show cursor when editing
-      # EDITOR_MODE
-      return true
+      return EDITOR_MODE
     end
 
     def update_game()
-      # Jump
-      if button_down?(Gosu::KB_SPACE)
-        if @menu.active
+      if @menu.active
+        if button_down?(Gosu::KB_RETURN)
           # All menus just start a particular level, menu deactivates as the option has been selected
           menu.active = false
           start_level(@level_number, self)
-        else
-          jump(@current_level, @player)
-        end
+        end        
+        return
       end
 
-      # If we are in the menu we don't want to do anything else
-      if @menu.active
-        return
+      # Jump
+      if button_down?(Gosu::KB_SPACE)
+        jump(@current_level, @player)
       end
 
       # Move Left
@@ -130,6 +103,14 @@ class PlatformerGame < Gosu::Window
         # apply x and y velocities to all characters
         apply_physics(@current_level, character)
       end
+
+      # Check if player should interact with tile with special mechanic (eg. spike, coin, diamond)
+
+      # check which tile was hit as it may have a special interaction eg. spike, ladder or button
+      mechanic_tile = get_mechanic_tile(@current_level, @player.x, @player.y)
+
+      # use the mechanic of the tile
+      activate_mechanic(@player, mechanic_tile)  
 
       if @player.beat_level || @player.x < 50
 
@@ -150,8 +131,16 @@ class PlatformerGame < Gosu::Window
 
       update_timer(@timer)
 
+      # if you fell off the map or died to enemy / spike
+      if @player.y > HEIGHT || @player.dead
+        # respawn player
+        @player.dead = false
+        reset_entity(@player)
+      end
+
+
       # If you run out of time then restart at level 1
-      if @timer.done
+      if @timer.done || @player.y > HEIGHT 
         # Game restarts at level 1
         @level_number = 1
         game_lose(@menu)
@@ -159,6 +148,10 @@ class PlatformerGame < Gosu::Window
     end
 
     def update
+      if (button_down?(Gosu::KB_ESCAPE))
+        close()
+      end
+
       if (EDITOR_MODE)
         update_editor(@editor)
       else
@@ -186,7 +179,7 @@ class PlatformerGame < Gosu::Window
 
     def draw_timer()
       # draw timer in top left corner
-      @timer.font.draw_text(@timer.seconds_left, 10, 10, 1)
+      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Remaining: " + @timer.seconds_left.to_s, 10, 10, 1)
     end
 
     # draw characters on top of the existing level
@@ -236,18 +229,22 @@ end
 
 def level_complete(number)
   @menu.active = true
-  @menu.message = "Level " + number.to_s + " Complete! Press [SPACE] for the next level"
+  @menu.message = "Level " + number.to_s + " Complete! Press [ENTER] for the next level"
 end
 
 def game_lose(menu)
   @menu.active = true
-  @menu.message = "                 Game over! You ran out of time! \n                          Press [SPACE] to retry."
+  @menu.message = "                 Game over! You ran out of time! \n                          Press [ENTER] to retry."
 
 end
 
 def game_win(menu)
   @menu.active = true
-  @menu.message = "                   Congratulations! You win! \n If you want to play again, press [SPACE] to restart!"
+  @menu.message = "                   Congratulations! You win! \n If you want to play again, press [ENTER] to restart!"
+end
+
+def activate_mechanic(player, tile)
+
 end
 
 # main game loop

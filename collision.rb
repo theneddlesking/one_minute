@@ -20,10 +20,6 @@ def apply_physics(level, entity)
 
   # Velocity has been used up
   entity.x_velocity = 0
-
-  # TODO: Check which tile was hit as it may have a special interaction eg. spike, ladder or button
-
-  # TODO: Check if player has fallen off the map
 end
 
 def jump(level, player)
@@ -45,14 +41,23 @@ def sign(x)
 end
 
 def character_hit_tiles?(level, character, x_step, y_step)
-    # Character is smaller than a single block so you need to check the block directly below
-
     # Checks if tile is solid within
     return solid?(level, character.x + x_step, character.y + y_step) ||
     solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step - CHARACTER_SIZE) ||
     solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step) || 
     solid?(level, character.x + x_step, character.y + y_step - CHARACTER_SIZE)
-end 
+end
+
+def get_mechanic_tile(level, x, y)
+  x = x / TILE_SIZE
+  y = y / TILE_SIZE
+
+  if (off_map?(level, x, y))
+    return nil
+  end
+
+  return level.map_data[y][x]
+end
 
 def solid?(level, x, y)
   x += CHARACTER_SIZE
@@ -61,9 +66,13 @@ def solid?(level, x, y)
   x = x / TILE_SIZE
   y = y / TILE_SIZE
 
-  if x < 0 || x >= level.map_width || y < 0 || y >= level.map_height
+  if off_map?(level, x, y)
     return false
   end
 
   return level.map_data[y][x].data.solid
+end
+
+def off_map?(level, x, y)
+  return x < 0 || x >= level.map_width || y < 0 || y >= level.map_height
 end

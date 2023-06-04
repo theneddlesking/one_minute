@@ -55,17 +55,14 @@ end
 
 # a single screen level
 class Level
-    attr_accessor :map_data, :map_height, :map_width, :decorations, :mechanics, :characters
+    attr_accessor :map_data, :map_height, :map_width, :characters
 
-    def initialize(map_data, decorations = [], characters = [], mechanics = [])
+    def initialize(map_data)
         @map_data = map_data
         @map_height = map_data.length
         @map_width = map_data[0].length
     
-        @decorations = decorations
-
         @characters = characters
-        @mechanics = mechanics
     end
 end
 
@@ -126,7 +123,7 @@ def export_map_data(map_data)
     maps.close()
 end
 
-def load_levels(count)
+def load_level_maps(count)
     maps = File.open("./maps.txt", "r")
     levels = []
 
@@ -158,7 +155,6 @@ def start_level(level_number, game)
     game.level_number = level_number
     game.current_level = game.levels[game.level_number - 1]
   
-    puts("Starting level: " + game.level_number.to_s)
     setup_level(game.current_level)
 
     # load current player and characters for that level into the game
@@ -171,18 +167,15 @@ def start_level(level_number, game)
     start_timer(game.timer)
 end
 
-def create_levels(levels, level_data)
+def add_characters_to_levels(levels, level_data)
     levels.each_with_index do | level, index |
-        decorations, characters, mechanics = level_data[index]
-
-        create_level(level, decorations, characters, mechanics)
+        characters = level_data[index]
+        add_characters(level, characters)
     end
 end
 
-def create_level(level, decorations, characters, mechanics)
-    level.decorations = decorations
+def add_characters(level, characters)
     level.characters = characters
-    level.mechanics = mechanics
 end
 
 def setup_level(level)
@@ -191,22 +184,17 @@ def setup_level(level)
     # set characters
     level.characters.each do |character|
       # reset physics and positions of all characters
-      character.x = character.start_x
-      character.y = character.start_y
-      character.x_velocity = 0
-      character.y_velocity = 0
-  
+      reset_entity(character)
+
       # TODO reset enemy pathing?
     end
     
     player.beat_level = false
-  
-    # set level mechanics
-    reset_level_mechanics(level.mechanics)
-end
-  
-def reset_level_mechanics(mechanics)
-    # reset coins
-    # reset keys    
-    # reset buttons
+  end
+
+def reset_entity(entity)
+    entity.x = entity.start_x
+    entity.y = entity.start_y
+    entity.x_velocity = 0
+    entity.x_velocity = 0
 end

@@ -1,8 +1,21 @@
 class Editor 
     attr_accessor :tile_sets, :current_tile_set, :level, :tile_pos, :key_states
 
-    def initialize(tile_sets, level)
-        @tile_sets = tile_sets
+    def initialize(level)
+        @tile_sets = [
+            # Blocks    
+            TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS], Gosu::KB_B),
+            # Collectables    
+            TileSet.new([Tiles::COIN Tiles::DIAMOND, Tiles::KEY], Gosu::KB_C),
+            # Mechanics   
+            TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::FLAG3, Tiles::LADDER, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_C),
+            # Decoration   
+            # TileSet.new([
+                # Tiles::WATER1, Tiles::WATER2, Tiles::WATER3, Tiles::WATER4, 
+                # Tiles::WATER5, Tiles::WATER6, Tiles::WATER7, Tiles::WATER8, 
+                # Tiles::WATER9, Tiles::BUSH1, Tiles::BUSH2, Tiles::BUSH3,
+                # Tiles::BUSH4, Tiles::BUSH5], Gosu::KB_D),
+        ]
         @current_tile_set = tile_sets[0]
         @level = level
         @tile_pos = [0, 0]
