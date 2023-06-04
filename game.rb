@@ -241,13 +241,13 @@ end
 
 def game_lose(menu)
   @menu.active = true
-  @menu.message = "Game over! You ran out of time! \n Press [SPACE] to retry."
+  @menu.message = "                 Game over! You ran out of time! \n                          Press [SPACE] to retry."
 
 end
 
 def game_win(menu)
   @menu.active = true
-  @menu.message = "Congratulations! You win! \n If you want to play again, press [SPACE] to restart!"
+  @menu.message = "                   Congratulations! You win! \n If you want to play again, press [SPACE] to restart!"
 end
 
 # main game loop
