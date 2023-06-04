@@ -8,7 +8,7 @@ class Editor
             # Collectables    
             TileSet.new([Tiles::COIN, Tiles::DIAMOND, Tiles::KEY], Gosu::KB_C),
             # Mechanics   
-            TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::FLAG3, Tiles::LADDER1, Tiles::LADDER2, Tiles::LADDER3, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_C),
+            TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::FLAG3, Tiles::LADDER1, Tiles::LADDER2, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_C),
             # Decoration   
             # TileSet.new([
                 # Tiles::WATER1, Tiles::WATER2, Tiles::WATER3, Tiles::WATER4, 

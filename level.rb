@@ -41,27 +41,26 @@ end
 # 20 tiles per row, indexed at 0
 module Tiles
     # Blocks
-    SKY = add_new_tile_data(0,  false)
+    SKY = add_new_tile_data(20 * 3 + 12,  false)
     DIRT = add_new_tile_data(20 * 6 + 3)
     GRASS = add_new_tile_data(23)
 
     # false, Collectables
-    COIN = add_new_tile_data(0, false, Collectables::COIN)
-    DIAMOND = add_new_tile_data(0, false, Collectables::DIAMOND)
-    KEY = add_new_tile_data(0, false, Collectables::KEY)
+    COIN = add_new_tile_data(20 * 7 + 12, false, Collectables::COIN)
+    DIAMOND = add_new_tile_data(20 * 3 + 8, false, Collectables::DIAMOND)
+    KEY = add_new_tile_data(20 + 8, false, Collectables::KEY)
 
     # Tiles with mechanics
-    FLAG1 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
+    FLAG1 = add_new_tile_data(20 * 5 + 12, false, Collectables::NONE, Mechanics::FLAG)
     FLAG2 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
-    FLAG3 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::FLAG)
+    FLAG3 = add_new_tile_data(20 * 7 + 12, false, Collectables::NONE, Mechanics::FLAG)
 
-    LADDER1 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
-    LADDER2 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
-    LADDER3 = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LADDER)
+    LADDER1 = add_new_tile_data(20 * 2 + 12, false, Collectables::NONE, Mechanics::LADDER)
+    LADDER2 = add_new_tile_data(20 * 3 + 12, false, Collectables::NONE, Mechanics::LADDER)
 
-    SPIKE = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::SPIKE)
-    LOCK = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::LOCK)
-    SPRING = add_new_tile_data(20 * 6 + 12, false, Collectables::NONE, Mechanics::SPRING)
+    SPIKE = add_new_tile_data(20 * 3 + 9, false, Collectables::NONE, Mechanics::SPIKE)
+    LOCK = add_new_tile_data(20 + 9, false, Collectables::NONE, Mechanics::LOCK)
+    SPRING = add_new_tile_data(20 * 5 + 9, false, Collectables::NONE, Mechanics::SPRING)
 end
 
 # a single tile
