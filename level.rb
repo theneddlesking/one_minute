@@ -58,7 +58,7 @@ module Tiles
     LADDER2 = add_new_tile_data(20 * 3 + 12, false, Collectables::NONE, Mechanics::LADDER)
 
     SPIKE = add_new_tile_data(20 * 3 + 9, false, Collectables::NONE, Mechanics::SPIKE)
-    LOCK = add_new_tile_data(20 + 9, false, Collectables::NONE, Mechanics::LOCK)
+    LOCK = add_new_tile_data(20 + 9, true, Collectables::NONE, Mechanics::LOCK)
     SPRING = add_new_tile_data(20 * 5 + 9, false, Collectables::NONE, Mechanics::SPRING)
 end
 

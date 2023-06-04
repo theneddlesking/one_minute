@@ -7,7 +7,7 @@ require_relative 'menu.rb'
 
 require 'gosu'
 
-EDITOR_MODE = true
+EDITOR_MODE = false
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
