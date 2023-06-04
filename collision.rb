@@ -1,7 +1,9 @@
+require_relative 'character.rb'
+
 TILE_SIZE = 18
 CHARACTER_SIZE = 24
 
-def apply_physics(level, entity)
+def apply_physics(level, player, entity)
   # steps per frame, max of 1 to avoid going inside tiles
   step = 1
 
@@ -10,13 +12,13 @@ def apply_physics(level, entity)
 
   y_step = step * sign(entity.y_velocity)
   
-  entity.y_velocity.abs.times { if !character_hit_tiles?(level, entity, 0, y_step) then entity.y += y_step else entity.y_velocity = 0 end }
+  entity.y_velocity.abs.times { if !character_hit_tiles?(player, level, entity, 0, y_step) then entity.y += y_step else entity.y_velocity = 0 end }
   
   # Directional walking, horizontal movement
   x_step = step * sign(entity.x_velocity)
 
   # Step in the direction of the entity's velocity until it hits a wall
-  entity.x_velocity.abs.times { if !character_hit_tiles?(level, entity, x_step, 0) then entity.x += x_step end }
+  entity.x_velocity.abs.times { if !character_hit_tiles?(player, level, entity, x_step, 0) then entity.x += x_step end }
 
   # Velocity has been used up
   entity.x_velocity = 0
@@ -24,7 +26,7 @@ end
 
 def jump(level, player)
   # looks just at the feet of the player
-  if solid?(level, player.x, player.y + 1)
+  if solid?(player, player, level, player.x, player.y + 1)
     player.y_velocity = -@player.jump_height
   end
 end
@@ -40,12 +42,13 @@ def sign(x)
   return 0
 end
 
-def character_hit_tiles?(level, character, x_step, y_step)
+def character_hit_tiles?(player, level, character, x_step, y_step)
+  
     # Checks if tile is solid within
-    return solid?(level, character.x + x_step, character.y + y_step) ||
-    solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step - CHARACTER_SIZE) ||
-    solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step) || 
-    solid?(level, character.x + x_step, character.y + y_step - CHARACTER_SIZE)
+    return solid?(player, character, level, character.x + x_step, character.y + y_step) ||
+    solid?(player, character, level, character.x + x_step - CHARACTER_SIZE, character.y + y_step - CHARACTER_SIZE) ||
+    solid?(player, character, level, character.x + x_step - CHARACTER_SIZE, character.y + y_step) || 
+    solid?(player, character, level, character.x + x_step, character.y + y_step - CHARACTER_SIZE)
 end
 
 def get_current_tile(level, x, y)
@@ -59,18 +62,27 @@ def get_current_tile(level, x, y)
   return level.map_data[y + 1][x + 1]
 end
 
-def solid?(level, x, y)
+def solid?(player, character, level, x, y)
   x += CHARACTER_SIZE
   y += CHARACTER_SIZE
 
   x = x / TILE_SIZE
   y = y / TILE_SIZE
 
+  # Also check if we hit the tile
+  if (character.id == Characters::PLAYER)
+    tile = get_current_tile(level, x, y)
+    activate_tile(character, tile, level)
+  end
+
   if off_map?(level, x, y)
     return false
   end
+  
+  tile = level.map_data[y][x]
 
-  return level.map_data[y][x].data.solid
+  # Lock tiles are solid until you have a key
+  return tile.data.solid || (tile.data.mechanic == Mechanics::LOCK && !player.has_key)
 end
 
 def off_map?(level, x, y)

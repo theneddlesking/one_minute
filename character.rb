@@ -1,9 +1,11 @@
 require 'gosu'
 
 # Characters from images
-module Tiles
+module Characters
     PLAYER = 1
+    ENEMY = 9 + 7
 end
+
 
 class Player
     attr_accessor :x, :y, :x_velocity, :y_velocity, :id, :jump_height, :beat_level, :start_x, :start_y, :dead, :diamonds, :coins, :has_key
@@ -29,7 +31,7 @@ class Player
         @has_key = false
 
         # for rendering which character
-        @id = Tiles::PLAYER
+        @id = Characters::PLAYER
     end
 end
 
@@ -50,7 +52,7 @@ class Enemy
         @path = []
 
         # for rendering which character
-        @id = Tiles::PLAYER
+        @id = Characters::ENEMY
     end
 end
 

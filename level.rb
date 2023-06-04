@@ -9,7 +9,6 @@ class TileData
         @solid = solid
         @collectable = collectable
         @mechanic = mechanic
-
     end
 end
 
@@ -36,7 +35,6 @@ def add_new_tile_data(id, solid = true, collectable = Collectables::NONE, mechan
     $tile_map.store(id, tile_data)
     return tile_data
 end
-    
 
 # the tile codes from the image
 # 20 tiles per row, indexed at 0
@@ -59,13 +57,13 @@ module Tiles
     LADDER2 = add_new_tile_data(20 * 3 + 12, false, Collectables::NONE, Mechanics::LADDER)
 
     SPIKE = add_new_tile_data(20 * 3 + 9, false, Collectables::NONE, Mechanics::SPIKE)
-    LOCK = add_new_tile_data(20 + 9, true, Collectables::NONE, Mechanics::LOCK)
+    LOCK = add_new_tile_data(20 + 9, false, Collectables::NONE, Mechanics::LOCK)
     SPRING = add_new_tile_data(20 * 5 + 9, false, Collectables::NONE, Mechanics::SPRING)
 end
 
 # a single tile
 class Tile
-    attr_accessor :data, :x, :y, :collected, :locked
+    attr_accessor :data, :x, :y, :collected
 
     def initialize(data, x, y)
         @data = data
@@ -74,9 +72,6 @@ class Tile
 
         # used for collectables
         @collected = false
-
-        # used for locks
-        @locked = true
     end
 end
 
@@ -228,9 +223,38 @@ def setup_level(level)
 
       # TODO reset enemy pathing?
     end
+
+    reset_collectables(level, player)
     
     player.beat_level = false
-  end
+    player.has_key = false
+    player.coins = 0
+    player.diamonds = 0
+end
+
+def reset_collectables(level, player)
+    level.map_data.each do |row| 
+        row.each do |tile|  
+            # if the tile is a collectable (eg. coin, diamond) that has been collected
+            
+            if (tile.data.collectable != Collectables::NONE)
+                # add back the collectable to recollect and remove it from the playe3r
+                if tile.collected
+                    # the player loses all their collectables per death
+                    case tile.data.collectable
+                    when Collectables::DIAMOND
+                      player.diamonds -= 1
+                    when Collectables::COIN
+                      player.coins -= 1
+                    end        
+
+                    # can be collected again
+                    tile.collected = false
+                end
+            end
+        end    
+    end
+end
 
 def reset_entity(entity)
     entity.x = entity.start_x

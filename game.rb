@@ -101,7 +101,7 @@ class PlatformerGame < Gosu::Window
       # Make airborne characters fall
       @characters.each do |character| 
         # apply x and y velocities to all characters
-        apply_physics(@current_level, character)
+        apply_physics(@current_level, @player, character)
       end
 
       # Check if player should interact with tile with special mechanic (eg. spike, coin, diamond)
@@ -110,7 +110,7 @@ class PlatformerGame < Gosu::Window
       tile = get_current_tile(@current_level, @player.x, @player.y)
 
       # use the mechanic of the tile
-      activate_tile(@player, tile, @current_level)  
+      activate_tile(@player, tile, @current_level)
 
       if @player.beat_level
 
@@ -135,6 +135,7 @@ class PlatformerGame < Gosu::Window
       if @player.y > HEIGHT || @player.dead
         # respawn player
         @player.dead = false
+        reset_collectables(@current_level, @player)
         reset_entity(@player)
       end
 
@@ -179,7 +180,7 @@ class PlatformerGame < Gosu::Window
 
     def draw_timer()
       # draw timer in top left corner
-      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Remaining: " + @timer.seconds_left.to_s, 10, 10, 1)
+      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Left: " + @timer.seconds_left.to_s + "     Coins: " + @player.coins.to_s + "      Diamonds: " + @player.diamonds.to_s , 10, 10, 1)
     end
 
     # draw characters on top of the existing level
@@ -215,10 +216,14 @@ class PlatformerGame < Gosu::Window
     
       map_height.times do |y|
         map_width.times do |x|
+          tile = map_data[y][x]
 
           # get tile index id
-          tile_index = map_data[y][x].data.id
+          tile_index = tile.data.id
           next if tile_index == 0 # skip empty tiles
+          next if tile.collected
+
+          next if @player.has_key && tile.data.mechanic == Mechanics::LOCK
 
           # draw the tile image
           draw_tile(@tiles, tile_index, x * TILE_SIZE, y * TILE_SIZE)
@@ -249,37 +254,30 @@ def activate_tile(player, tile, level)
     return
   end
 
-  puts(tile.data.collectable)
-
-  case tile.data.collectable
-  when Collectables::KEY
-    player.has_key = true
-    remove_collectable(level, tile)
-  when Collectables::DIAMOND
-    player.diamonds += 1
-    remove_collectable(level, tile)
-  when Collectables::COIN
-    player.coins += 1
-    remove_collectable(level, tile)
+  # Collect collectable
+  if (!tile.collected)
+    case tile.data.collectable
+    when Collectables::KEY
+      player.has_key = true
+      remove_collectable(level, tile)
+    when Collectables::DIAMOND
+      player.diamonds += 1
+      remove_collectable(level, tile)
+    when Collectables::COIN
+      player.coins += 1
+      remove_collectable(level, tile)
+    end
   end
 
-  # puts(tile.data.mechanic)
-
+  # Activate special tile mechanic
   case tile.data.mechanic
   when Mechanics::SPIKE
-    puts("You died!")
     player.dead = true
   when Mechanics::FLAG
-    puts("You reached the flag")
     player.beat_level = true
   when Mechanics::SPRING
     player.y_velocity = -20 
-  when Mechanics::LOCK
-    if (player.has_key)
-      remove_lock_tile(level, tile)
-    end
   when Mechanics::LADDER
-    puts("Ladder")
     player.y_velocity = -5
   end
 end
@@ -288,9 +286,6 @@ def remove_collectable(level, collectable)
   collectable.collected = true
 end
 
-def remove_lock_tile(level, lock)
-  lock.locked = false
-end
 
 # main game loop
 def main
