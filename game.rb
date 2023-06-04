@@ -2,6 +2,8 @@ require_relative 'level.rb'
 require_relative 'character.rb'
 require_relative 'collision.rb'
 require_relative 'editor.rb'
+require_relative 'timer.rb'
+
 
 require 'gosu'
 
@@ -14,13 +16,15 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor 
+    attr_accessor :current_level, :player, :editor, :timer
     
     def initialize
       super(WIDTH, HEIGHT)
       @levels = load_levels(1)
       @level_number = 1
       @current_level = @levels[@level_number - 1]
+
+      @timer = Timer.new()
 
 
       @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS], Gosu::KB_B)], @current_level)
@@ -66,6 +70,8 @@ class PlatformerGame < Gosu::Window
         # apply x and y velocities to all characters
         apply_physics(@current_level, character)
       end
+
+      update_timer(@timer)
     end
 
     def update
@@ -82,7 +88,14 @@ class PlatformerGame < Gosu::Window
       # editor mode only needs tiles
       if !EDITOR_MODE
         draw_characters()
+
+        draw_timer()
       end
+    end
+
+    def draw_timer()
+      # draw timer in top left corner
+      @timer.font.draw(@timer.seconds_left, 10, 10, 1)
     end
 
     # draw characters on top of the existing level
@@ -125,17 +138,15 @@ def main
     game = PlatformerGame.new
 
     # start first level
-    start_level(game.current_level)    
+    start_level(game.current_level, game.timer)    
 
     # render the game
     game.show
 end
 
-def start_level(level)
-    reset_map_data()
-
-    # temporary export so that progress isn't lost
-    export_map_data(level.map_data)
+def start_level(level, timer)
+  reset_timer(timer)
+  start_timer(timer)
 end
 
 main

@@ -22,7 +22,7 @@ end
 # the tile codes from the image
 # 20 tiles per row, indexed at 0
 module Tiles
-    SKY = add_new_tile_data(20 * 8 - 3,  false)
+    SKY = add_new_tile_data(0,  false)
     DIRT = add_new_tile_data(20 * 6 + 3)
     GRASS = add_new_tile_data(23)
 end
@@ -96,8 +96,6 @@ def generate_basic_map(width, height)
         map_data << row
     end
 
-    # fill_row(map_data, width, 18, Tiles::GRASS, 10)
-
     # creates a grass floor
     fill_row(map_data, width, height - ground_depth, Tiles::GRASS)
 
@@ -105,12 +103,6 @@ def generate_basic_map(width, height)
     (1..(ground_depth-1)).step(1) do |dirt_row|
         fill_row(map_data, width, height - dirt_row, Tiles::DIRT)
     end
-
-    map_data[height - ground_depth - 5][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 5)
-    map_data[height - ground_depth - 4][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 4)
-    map_data[height - ground_depth - 3][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 3)
-    map_data[height - ground_depth - 2][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 2)
-    map_data[height - ground_depth - 1][15] = Tile.new(Tiles::GRASS, 15, height - ground_depth - 1)
 
     return map_data
 end

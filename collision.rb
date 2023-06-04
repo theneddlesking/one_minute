@@ -1,5 +1,3 @@
-require 'gosu'
-
 TILE_SIZE = 18
 CHARACTER_SIZE = 24
 
@@ -23,8 +21,6 @@ def apply_physics(level, entity)
   # Velocity has been used up
   entity.x_velocity = 0
 
-  
-
   # TODO: Check which tile was hit as it may have a special interaction eg. spike, ladder or button
 
   # TODO: Check if player has fallen off the map
@@ -33,7 +29,7 @@ end
 def jump(level, player)
   # looks just at the feet of the player
   if solid?(level, player.x, player.y + 1)
-    player.y_velocity = -20
+    player.y_velocity = -@player.jump_height
   end
 end
 
@@ -53,8 +49,9 @@ def character_hit_tiles?(level, character, x_step, y_step)
 
     # Checks if tile is solid within
     return solid?(level, character.x + x_step, character.y + y_step) ||
-    solid?(level, character.x + x_step - (CHARACTER_SIZE), character.y + y_step - (CHARACTER_SIZE)) ||
-    solid?(level, character.x + x_step - (CHARACTER_SIZE), character.y + y_step)
+    solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step - CHARACTER_SIZE) ||
+    solid?(level, character.x + x_step - CHARACTER_SIZE, character.y + y_step) || 
+    solid?(level, character.x + x_step, character.y + y_step - CHARACTER_SIZE)
 end 
 
 def solid?(level, x, y)
