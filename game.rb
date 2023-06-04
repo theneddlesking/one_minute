@@ -3,6 +3,7 @@ require_relative 'character.rb'
 require_relative 'collision.rb'
 require_relative 'editor.rb'
 require_relative 'timer.rb'
+require_relative 'menu.rb'
 
 require 'gosu'
 
@@ -14,7 +15,7 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :level_data, :characters
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :level_data, :characters, :menu
     
     def initialize
       super(WIDTH, HEIGHT)
@@ -71,6 +72,8 @@ class PlatformerGame < Gosu::Window
 
       @level_count = @levels.length
 
+      @menu = Menu.new()
+
       @timer = Timer.new()
 
       @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS, Tiles::FLAG], Gosu::KB_B)], @current_level)
@@ -98,7 +101,18 @@ class PlatformerGame < Gosu::Window
     def update_game()
       # Jump
       if button_down?(Gosu::KB_SPACE)
-        jump(@current_level, @player)
+        if @menu.active
+          # All menus just start a particular level, menu deactivates as the option has been selected
+          menu.active = false
+          start_level(@level_number, self)
+        else
+          jump(@current_level, @player)
+        end
+      end
+
+      # If we are in the menu we don't want to do anything else
+      if @menu.active
+        return
       end
 
       # Move Left
@@ -118,14 +132,19 @@ class PlatformerGame < Gosu::Window
       end
 
       if @player.beat_level || @player.x < 50
-          level_complete(@level_number)
 
           # the player beat the final level so they beat the game
           if @level_number == @level_count 
             reset_timer(@timer)
-            game_win()
+            
+            # next time you play it starts at level 1
+            @level_number = 1
+            game_win(@menu)
           else # the player starts the next level
-            start_level(@level_number + 1, self)
+            reset_timer(@timer)
+            level_complete(@level_number)
+
+            @level_number += 1
           end
       end 
 
@@ -133,10 +152,9 @@ class PlatformerGame < Gosu::Window
 
       # If you run out of time then restart at level 1
       if @timer.done
-        game_lose()
-
-        # TODO instead of instantly starting the next level take them back to the menu screen 
-        start_level(1, self)
+        # Game restarts at level 1
+        @level_number = 1
+        game_lose(@menu)
       end
     end
 
@@ -152,6 +170,11 @@ class PlatformerGame < Gosu::Window
       draw_background()
 
       draw_level(@current_level)
+
+      # waiting menu choice
+      if @menu.active
+        draw_menu(@menu)
+      end
 
       # editor mode only needs tiles
       if !EDITOR_MODE && @timer.running
@@ -187,6 +210,10 @@ class PlatformerGame < Gosu::Window
       Gosu.draw_rect(0, 0, WIDTH, HEIGHT, sky, 0, mode = :default)
     end
 
+    def draw_menu(menu)
+      @menu.font.draw_text(@menu.message, 10, 200, 1)
+    end
+
     # draw tiles in level
     def draw_level(level)
       map_height = level.map_height
@@ -208,19 +235,22 @@ class PlatformerGame < Gosu::Window
 end
 
 def level_complete(number)
-  puts("Level " + number.to_s + " Complete!")
+  @menu.active = true
+  @menu.message = "Level " + number.to_s + " Complete! Press [SPACE] for the next level"
 end
 
-def game_lose()
-  puts("Game over! You ran out of time!")
+def game_lose(menu)
+  @menu.active = true
+  @menu.message = "Game over! You ran out of time! \n Press [SPACE] to retry."
+
 end
 
-def game_win()
-  puts("You win!")
+def game_win(menu)
+  @menu.active = true
+  @menu.message = "Congratulations! You win! \n If you want to play again, press [SPACE] to restart!"
 end
 
 # main game loop
-
 def main
     # create game
     game = PlatformerGame.new

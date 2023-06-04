@@ -154,10 +154,11 @@ def load_levels(count)
 end
 
 
-def start_level(level_index, game)
-    game.level_number = level_index
+def start_level(level_number, game)
+    game.level_number = level_number
     game.current_level = game.levels[game.level_number - 1]
   
+    puts("Starting level: " + game.level_number.to_s)
     setup_level(game.current_level)
 
     # load current player and characters for that level into the game
