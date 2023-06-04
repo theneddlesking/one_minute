@@ -149,10 +149,12 @@ class PlatformerGame < Gosu::Window
     end
 
     def draw
+      draw_background()
+
       draw_level(@current_level)
 
       # editor mode only needs tiles
-      if !EDITOR_MODE
+      if !EDITOR_MODE && @timer.running
         draw_characters()
 
         draw_timer()
@@ -176,6 +178,14 @@ class PlatformerGame < Gosu::Window
 
       tiles[tile_x + tile_y * (tiles.size / TILE_SIZE)].draw(x, y, 0)
     end 
+
+    def draw_background()
+      sky = Gosu::Color.new(135, 206, 235)
+      night = Gosu::Color.new(2, 7, 93)
+
+      # draws sky background
+      Gosu.draw_rect(0, 0, WIDTH, HEIGHT, sky, 0, mode = :default)
+    end
 
     # draw tiles in level
     def draw_level(level)
