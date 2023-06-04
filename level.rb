@@ -25,6 +25,7 @@ module Tiles
     SKY = add_new_tile_data(0,  false)
     DIRT = add_new_tile_data(20 * 6 + 3)
     GRASS = add_new_tile_data(23)
+    FLAG = add_new_tile_data(20 * 6 + 12)
 end
 
 
@@ -157,14 +158,19 @@ def start_level(level_index, game)
     game.level_number = level_index
     game.current_level = game.levels[game.level_number - 1]
   
-    setup_level(game.player, game.current_level)
+    setup_level(game.current_level)
     reset_timer(game.timer)
+
+    # get the player for this level
+    game.player = game.current_level.characters[0]
   
     # the timer begins again
     start_timer(game.timer)
 end
   
-def setup_level(player, level)
+def setup_level(level)
+    player = level.characters[0]
+
     # set characters
     level.characters.each do |character|
       # reset physics and positions of all characters
@@ -173,7 +179,7 @@ def setup_level(player, level)
       character.x_velocity = 0
       character.y_velocity = 0
   
-      # TODO enemy pathing?
+      # TODO reset enemy pathing?
     end
     
     player.beat_level = false

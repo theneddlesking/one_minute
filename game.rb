@@ -18,7 +18,7 @@ class PlatformerGame < Gosu::Window
     
     def initialize
       super(WIDTH, HEIGHT)
-      @levels = load_levels(1)
+      @levels = load_levels(2)
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 
@@ -26,7 +26,7 @@ class PlatformerGame < Gosu::Window
 
       @timer = Timer.new()
 
-      @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS], Gosu::KB_B)], @current_level)
+      @editor = Editor.new([TileSet.new([Tiles::SKY, Tiles::DIRT, Tiles::GRASS, Tiles::FLAG], Gosu::KB_B)], @current_level)
 
       # load tiles from tile map image
       @tiles = Gosu::Image.load_tiles(self, "./images/tiles_packed.png", TILE_SIZE, TILE_SIZE, true)
@@ -70,9 +70,11 @@ class PlatformerGame < Gosu::Window
         apply_physics(@current_level, character)
       end
 
-      if @player.beat_level
+      if @player.beat_level || @player.x < 50
+          level_complete(@level_number)
+
           # the player beat the final level so they beat the game
-          if @level_number == @level_count
+          if @level_number == @level_count 
             game_win()
           else # the player starts the next level
             start_level(@level_number + 1, self)
@@ -145,6 +147,10 @@ class PlatformerGame < Gosu::Window
         end
       end
     end
+end
+
+def level_complete(number)
+  puts("Level " + number.to_s + " Complete!")
 end
 
 def game_lose()
