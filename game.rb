@@ -18,7 +18,7 @@ class PlatformerGame < Gosu::Window
     
     def initialize
       super(WIDTH, HEIGHT)
-      @levels = [Level.new(generate_basic_map(36, 27))]
+      @levels = load_levels(1)
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 

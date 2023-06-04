@@ -1,20 +1,32 @@
+require 'json'
+
 # data per tile type
 class TileData
     attr_accessor :id, :solid
 
-    def initialize(id, solid = true)
+    def initialize(id, solid)
         @id = id
         @solid = solid
     end
 end
 
+$tile_map = {}
+
+def add_new_tile_data(id, solid = true)
+    tile_data = TileData.new(id, solid)
+    $tile_map.store(id, tile_data)
+    return tile_data
+end
+    
+
 # the tile codes from the image
 # 20 tiles per row, indexed at 0
 module Tiles
-    SKY = TileData.new(20 * 8 - 3,  false)
-    DIRT = TileData.new(20 * 6 + 3)
-    GRASS = TileData.new(23)
+    SKY = add_new_tile_data(20 * 8 - 3,  false)
+    DIRT = add_new_tile_data(20 * 6 + 3)
+    GRASS = add_new_tile_data(23)
 end
+
 
 # a single tile
 class Tile
@@ -116,4 +128,31 @@ def export_map_data(map_data)
     tile_ids = map_data.map { |row| row.map { |cell| cell.data.id } }
     maps.puts(tile_ids.to_s)
     maps.close()
+end
+
+def load_levels(count)
+    maps = File.open("./maps.txt", "r")
+    levels = []
+
+    count.times {
+        str = maps.gets.to_s
+        map = JSON.parse(str)
+
+        # convert ids back to the actual map data
+        tiles = []
+        map.each_with_index do |row, y|
+          tile_row = []
+          row.each_with_index do |tile_id, x|
+            tile_row << Tile.new($tile_map[tile_id], x, y)
+          end
+          tiles << tile_row
+        end
+
+        level = Level.new(tiles)
+        levels << level
+    }
+
+    maps.close()
+
+    return levels
 end
