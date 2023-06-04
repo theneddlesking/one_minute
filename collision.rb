@@ -18,10 +18,15 @@ def apply_physics(map_data, entity)
     puts(entity.y.to_s)
   end
 
+  
   entity.y_velocity.abs.times { 
     if !character_hit_tiles?(map_data, entity, 0, y_step) then 
-      entity.y += step 
+      entity.y += y_step 
     else 
+      if entity.y_velocity < 0
+        puts("hit tile")
+      end
+
       entity.y_velocity = 0 
     end 
   }
@@ -64,8 +69,8 @@ def character_hit_tiles?(map_data, character, x_step, y_step)
     solid?(map_data, character.x + x_step - (CHARACTER_SIZE), character.y + y_step - (CHARACTER_SIZE))
 
     if collided
-      puts "collided x: " + character.x.to_s + " y: " + character.y.to_s
-      puts "velocity x: " + character.x_velocity.to_s + " y; " + character.y_velocity.to_s
+      # puts "collided x: " + character.x.to_s + " y: " + character.y.to_s
+      # puts "velocity x: " + character.x_velocity.to_s + " y; " + character.y_velocity.to_s
     end
 
     return collided
