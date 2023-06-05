@@ -25,8 +25,8 @@ def apply_physics(level, player, entity)
 end
 
 def jump(level, player)
-  # looks just at the feet of the player
-  if solid?(player, player, level, player.x, player.y + 1)
+  # looks just at the feet of the player, also checks slightly to left and right so you can edge jump
+  if solid?(player, player, level, player.x, player.y + 1) || solid?(player, player, level, player.x - CHARACTER_SIZE, player.y + 1)
     player.y_velocity = -@player.jump_height
   end
 end
@@ -43,7 +43,6 @@ def sign(x)
 end
 
 def character_hit_tiles?(player, level, character, x_step, y_step)
-  
     # Checks if tile is solid within
     return solid?(player, character, level, character.x + x_step, character.y + y_step) ||
     solid?(player, character, level, character.x + x_step - CHARACTER_SIZE, character.y + y_step - CHARACTER_SIZE) ||
@@ -63,17 +62,27 @@ def get_current_tile(level, x, y)
 end
 
 def solid?(player, character, level, x, y)
+
+  # Also check if we hit the tile
+
   x += CHARACTER_SIZE
   y += CHARACTER_SIZE
+
+  if (character.id == Characters::PLAYER)
+    tile = get_current_tile(level, player.x, player.y)
+    activate_tile(character, tile, level)
+    tile = get_current_tile(level, player.x - CHARACTER_SIZE / 2, player.y - CHARACTER_SIZE / 2)
+    activate_tile(character, tile, level)
+    tile = get_current_tile(level, player.x - CHARACTER_SIZE / 2, player.y)
+    activate_tile(character, tile, level)
+    tile = get_current_tile(level, player.x, player.y - CHARACTER_SIZE / 2)
+    activate_tile(character, tile, level)
+  end
+
 
   x = x / TILE_SIZE
   y = y / TILE_SIZE
 
-  # Also check if we hit the tile
-  if (character.id == Characters::PLAYER)
-    tile = get_current_tile(level, x, y)
-    activate_tile(character, tile, level)
-  end
 
   if off_map?(level, x, y)
     return false

@@ -24,12 +24,17 @@ class Editor
 end
 
 def get_next_tile_of_set(set, direction)
-    set.current_index += 1
+    set.current_index += direction
+
+    if (set.current_index == -1)
+        set.current_index = set.tile_count - 1
+    end
 
     # wraps index back to 0
     if (set.current_index == set.tile_count)
         set.current_index = 0
     end
+
 
     tile = set.current_tile
 
@@ -65,7 +70,7 @@ end
 def swap_tile_shortcut(editor, direction)
     if direction == 1 && button_up?(Gosu::KbRight, editor.key_states)
         get_next_tile_of_set(editor.current_tile_set, direction)
-    elsif button_up?(Gosu::KbLeft, editor.key_states)
+    elsif direction == -1 && button_up?(Gosu::KbLeft, editor.key_states)
         get_next_tile_of_set(editor.current_tile_set, direction)
     end
 end
@@ -79,8 +84,6 @@ end
 
 def select_tile_set(editor, tile_set)
     if (button_down?(tile_set.shortcut))
-        puts(tile_set.shortcut)
-
         # the editor selects the new tile set 
         editor.current_tile_set = tile_set
 
@@ -104,7 +107,6 @@ end
 def select_tile_if_clicked(editor)
     if (button_down?(Gosu::MsLeft))
         tile_pos = mouse_over_tile(mouse_x, mouse_y)
-        puts("Selected tile x: " + tile_pos[0].to_s + " y: " + tile_pos[1].to_s)
         editor.tile_pos = tile_pos
     end
 end

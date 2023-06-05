@@ -164,6 +164,12 @@ def load_level_maps(count)
 
     count.times {
         str = maps.gets.to_s
+
+        # no more maps to read
+        if (str == '')
+            break
+        end
+
         map = JSON.parse(str)
 
         # convert ids back to the actual map data

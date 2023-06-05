@@ -15,34 +15,37 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :level_count
     
     def initialize
       super(WIDTH, HEIGHT)
       @character_data = [
         [
           # Level 1 Characters
-          Player.new(450, 50)
+          Player.new(550, 50)
         ],
         [
           # Level 2 Characters
-          Player.new(250, 50)
+          Player.new(600, 370)
         ],
         [
           # Level 3 Characters
-          Player.new(450, 50)
+          Player.new(600, 240)
         ],
         [
           # Level 4 Characters
-          Player.new(450, 50)
+          Player.new(430, 50)
         ],
         [
           # Level 5 Characters
-          Player.new(450, 50)
+          Player.new(50, 370)
         ]
       ]
 
-      @levels = add_characters_to_levels(load_level_maps(2), @character_data)
+      # editor mode only edits the current level
+
+      @levels = add_characters_to_levels(load_level_maps(5), @character_data)
+
       @level_number = 1
       @current_level = @levels[@level_number - 1]
 
@@ -65,7 +68,14 @@ class PlatformerGame < Gosu::Window
 
       # the player
       @player = @characters[0]
+
+      if (EDITOR_MODE)
+        # clear all other maps
+        reset_map_data()
+      end
+  
     end
+
 
     # this is called by Gosu to see if should show the cursor (or mouse)
     def needs_cursor?
@@ -135,6 +145,7 @@ class PlatformerGame < Gosu::Window
       if @player.y > HEIGHT || @player.dead
         # respawn player
         @player.dead = false
+        @player.has_key = false
         reset_collectables(@current_level, @player)
         reset_entity(@player)
       end
@@ -150,6 +161,10 @@ class PlatformerGame < Gosu::Window
 
     def update
       if (button_down?(Gosu::KB_ESCAPE))
+        # automatically saves last level
+        if (EDITOR_MODE)
+          export_map_data(editor.level.map_data)
+        end
         close()
       end
 
@@ -222,7 +237,6 @@ class PlatformerGame < Gosu::Window
           tile_index = tile.data.id
           next if tile_index == 0 # skip empty tiles
           next if tile.collected
-
           next if @player.has_key && tile.data.mechanic == Mechanics::LOCK
 
           # draw the tile image

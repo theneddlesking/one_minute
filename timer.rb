@@ -6,7 +6,7 @@ class Timer
    def initialize()
         @start_time = Time.now
         @done = false
-        @length = 10 # the length of the timer in seconds
+        @length = 60 # the length of the timer in seconds
         @running = false
         @font = Gosu::Font.new(30)
    end
