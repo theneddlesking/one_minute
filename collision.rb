@@ -31,7 +31,7 @@ def jump(level, player)
   end
 end
 
-# get the sign
+# used for getting the step in the direction of the velocity
 def sign(x)
   if (x > 0) 
     return 1
@@ -68,6 +68,7 @@ def solid?(player, character, level, x, y)
   x += CHARACTER_SIZE
   y += CHARACTER_SIZE
 
+  # When we hit a tile we need to check if it has a special mechanic (we need to check this often for collectables to update as we move)
   if (character.id == Characters::PLAYER)
     tile = get_current_tile(level, player.x, player.y)
     activate_tile(character, tile, level)
@@ -79,10 +80,8 @@ def solid?(player, character, level, x, y)
     activate_tile(character, tile, level)
   end
 
-
   x = x / TILE_SIZE
   y = y / TILE_SIZE
-
 
   if off_map?(level, x, y)
     return false

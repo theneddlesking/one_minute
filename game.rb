@@ -7,7 +7,7 @@ require_relative 'menu.rb'
 
 require 'gosu'
 
-EDITOR_MODE = false
+EDITOR_MODE = true
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
@@ -15,7 +15,7 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :level_count
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :editor
     
     def initialize
       super(WIDTH, HEIGHT)
@@ -44,10 +44,14 @@ class PlatformerGame < Gosu::Window
 
       # editor mode only edits the current level
 
+
       @levels = add_characters_to_levels(load_level_maps(5), @character_data)
 
       @level_number = 1
       @current_level = @levels[@level_number - 1]
+
+      @editor = Editor.new(@current_level)
+
 
       @level_count = @levels.length
 
@@ -55,7 +59,6 @@ class PlatformerGame < Gosu::Window
 
       @timer = Timer.new()
 
-      @editor = Editor.new(@current_level)
 
       # load tiles from tile map image
       @tiles = Gosu::Image.load_tiles(self, "./images/tiles_packed.png", TILE_SIZE, TILE_SIZE, true)
@@ -195,7 +198,7 @@ class PlatformerGame < Gosu::Window
 
     def draw_timer()
       # draw timer in top left corner
-      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Left: " + @timer.seconds_left.to_s + "     Coins: " + @player.coins.to_s + "      Diamonds: " + @player.diamonds.to_s , 10, 10, 1)
+      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Left: " + @timer.seconds_left.to_s + "     Coins: " + @player.coins.to_s , 10, 10, 1)
     end
 
     # draw characters on top of the existing level

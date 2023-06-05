@@ -19,6 +19,8 @@ class Editor
         @current_tile_set = tile_sets[0]
         @level = level
         @tile_pos = [0, 0]
+
+        # holds data of whether a particular key was pressed, used for detecting single key
         @key_states = {}
     end
 end

@@ -21,7 +21,6 @@ class Player
         @y_velocity = 0
 
         @jump_height = 15
-
         @beat_level = false
 
         @dead = false
