@@ -10,11 +10,7 @@ class Editor
             # Mechanics   
             TileSet.new([Tiles::FLAG1, Tiles::FLAG2, Tiles::LADDER1, Tiles::LADDER2, Tiles::SPIKE, Tiles::LOCK, Tiles::SPRING], Gosu::KB_M),
             # Decoration   
-            # TileSet.new([
-                # Tiles::WATER1, Tiles::WATER2, Tiles::WATER3, Tiles::WATER4, 
-                # Tiles::WATER5, Tiles::WATER6, Tiles::WATER7, Tiles::WATER8, 
-                # Tiles::WATER9, Tiles::BUSH1, Tiles::BUSH2, Tiles::BUSH3,
-                # Tiles::BUSH4, Tiles::BUSH5], Gosu::KB_D),
+            TileSet.new([Tiles::BUSH1, Tiles::BUSH2, Tiles::BUSH3, Tiles::BUSH4, Tiles::BUSH5], Gosu::KB_D),
         ]
         @current_tile_set = tile_sets[0]
         @level = level

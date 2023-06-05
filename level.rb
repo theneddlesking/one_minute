@@ -44,7 +44,14 @@ module Tiles
     DIRT = add_new_tile_data(20 * 6 + 3)
     GRASS = add_new_tile_data(23)
 
-    # false, Collectables
+    # Decorations
+    BUSH1 = add_new_tile_data(20 * 6 + 5, false)
+    BUSH2 = add_new_tile_data(20 * 6 + 6, false)
+    BUSH3 = add_new_tile_data(20 * 6 + 7, false)
+    BUSH4 = add_new_tile_data(20 * 6 + 8, false)
+    BUSH5 = add_new_tile_data(20 * 6 + 9, false)
+
+    # Collectables
     COIN = add_new_tile_data(20 * 7 + 12, false, Collectables::COIN)
     DIAMOND = add_new_tile_data(20 * 3 + 8, false, Collectables::DIAMOND)
     KEY = add_new_tile_data(20 + 8, false, Collectables::KEY)

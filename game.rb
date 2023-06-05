@@ -7,7 +7,7 @@ require_relative 'menu.rb'
 
 require 'gosu'
 
-EDITOR_MODE = true
+EDITOR_MODE = false
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
@@ -198,7 +198,7 @@ class PlatformerGame < Gosu::Window
 
     def draw_timer()
       # draw timer in top left corner
-      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Left: " + @timer.seconds_left.to_s + "     Coins: " + @player.coins.to_s , 10, 10, 1)
+      @timer.font.draw_text("Level " + @level_number.to_s + "     Time Left: " + @timer.seconds_left.to_s + "     Coins: " + @player.coins.to_s , 10, 425, 1)
     end
 
     # draw characters on top of the existing level
