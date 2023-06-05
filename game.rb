@@ -4,16 +4,16 @@ require_relative 'collision.rb'
 require_relative 'editor.rb'
 require_relative 'timer.rb'
 require_relative 'menu.rb'
-
 require 'gosu'
-
-EDITOR_MODE = false
 
 class PlatformerGame < Gosu::Window
     WIDTH = 640
     HEIGHT = 480
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
+
+    EDITOR_MODE = false
+
 
     attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :editor, :started
     
@@ -262,33 +262,6 @@ class PlatformerGame < Gosu::Window
         end
       end
     end
-end
-
-def level_complete(number)
-  @menu.active = true
-  @menu.message = "Level " + number.to_s + " Complete! Press [ENTER] for the next level"
-end
-
-def game_lose(menu)
-  @menu.active = true
-  @menu.message = "                 Game over! You ran out of time! \n                          Press [ENTER] to retry."
-end
-
-
-def game_win(menu)
-  @menu.active = true
-  @menu.message = "                   Congratulations! You win! \n If you want to play again, press [ENTER] to restart!"
-end
-
-def draw_editor_text(menu)
-  @menu.message = "Editor Mode"
-end
-
-def draw_main_menu(menu)
-  @menu.active = true
-  @menu.message = "   One Minute Platformer by Ned Olsen \n  Use arrow keys and spacebar to move \n       Press [ENTER] to start!"
-  @menu.x = 100
-  @menu.y = 100
 end
 
 # activate collectable / mechanic associated with the tile
