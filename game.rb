@@ -15,7 +15,7 @@ class PlatformerGame < Gosu::Window
     TILE_SIZE = 18
     CHARACTER_SIZE = 24
 
-    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :editor
+    attr_accessor :current_level, :player, :editor, :timer, :levels, :level_number, :level_count, :characters, :menu, :character_data, :editor, :started
     
     def initialize
       super(WIDTH, HEIGHT)
@@ -42,8 +42,8 @@ class PlatformerGame < Gosu::Window
         ]
       ]
 
-      # editor mode only edits the current level
-
+      # has the game started yet or still on main menu
+      @started = false
 
       @levels = add_characters_to_levels(load_level_maps(5), @character_data)
 
@@ -52,13 +52,11 @@ class PlatformerGame < Gosu::Window
 
       @editor = Editor.new(@current_level)
 
-
       @level_count = @levels.length
 
       @menu = Menu.new()
 
       @timer = Timer.new()
-
 
       # load tiles from tile map image
       @tiles = Gosu::Image.load_tiles(self, "./images/tiles_packed.png", TILE_SIZE, TILE_SIZE, true)
@@ -73,6 +71,8 @@ class PlatformerGame < Gosu::Window
       @player = @characters[0]
 
       if (EDITOR_MODE)
+        # display message to let user know the program is in edit mode
+        draw_editor_text(@menu)
         # clear all other maps
         reset_map_data()
       end
@@ -87,10 +87,22 @@ class PlatformerGame < Gosu::Window
     end
 
     def update_game()
+      # if game hasn't started yet don't read the game loop yet
+      if !@started
+        draw_main_menu(@menu)
+      end
+
       if @menu.active
         if button_down?(Gosu::KB_RETURN)
           # All menus just start a particular level, menu deactivates as the option has been selected
           menu.active = false
+          @started = true
+
+          # All menu text now displays at the bottom of the screen
+          menu.x = 10
+          menu.y = 425
+
+          # Start the next level
           start_level(@level_number, self)
         end        
         return
@@ -181,10 +193,12 @@ class PlatformerGame < Gosu::Window
     def draw
       draw_background()
 
-      draw_level(@current_level)
+      if @started || EDITOR_MODE
+        draw_level(@current_level)
+      end
 
       # waiting menu choice
-      if @menu.active
+      if @menu.active || EDITOR_MODE
         draw_menu(@menu)
       end
 
@@ -223,7 +237,8 @@ class PlatformerGame < Gosu::Window
     end
 
     def draw_menu(menu)
-      @menu.font.draw_text(@menu.message, 10, 200, 1)
+      # draws menu text at the bottom of the screen
+      @menu.font.draw_text(@menu.message, @menu.x, @menu.y, 1, 1, 1, Gosu::Color::BLACK)
     end
 
     # draw tiles in level
@@ -257,12 +272,23 @@ end
 def game_lose(menu)
   @menu.active = true
   @menu.message = "                 Game over! You ran out of time! \n                          Press [ENTER] to retry."
-
 end
+
 
 def game_win(menu)
   @menu.active = true
   @menu.message = "                   Congratulations! You win! \n If you want to play again, press [ENTER] to restart!"
+end
+
+def draw_editor_text(menu)
+  @menu.message = "Editor Mode"
+end
+
+def draw_main_menu(menu)
+  @menu.active = true
+  @menu.message = "   One Minute Platformer by Ned Olsen \n  Use arrow keys and spacebar to move \n       Press [ENTER] to start!"
+  @menu.x = 100
+  @menu.y = 100
 end
 
 # activate collectable / mechanic associated with the tile
@@ -308,9 +334,6 @@ end
 def main
     # create game
     game = PlatformerGame.new
-
-    # start first level
-    start_level(1, game)    
 
     # render the game
     game.show
